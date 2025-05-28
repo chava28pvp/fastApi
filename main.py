@@ -1,32 +1,17 @@
-# main.py
-from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel
+# app/main.py
+from fastapi import FastAPI
+from app.api import routes_user, routes_role
+from app.core.database import Base, engine
 
-app = FastAPI()
+# Crea las tablas en la base de datos (si no existen)
+Base.metadata.create_all(bind=engine)
 
-class Item (BaseModel):
-    text:str = None
-    is_done:bool = False
+app = FastAPI(
+    title="FastAPI Users & Roles API",
+    description="Manejo de usuarios y roles conectados a SQL Server",
+    version="1.0.0"
+)
 
-items = []
-
-@app.get("/")
-def read_root():
-    return {"mensaje": "¡Hola, FastAPI!"}
-
-@app.post("/items")
-def createItems (item:Item):
-    items.append(item)
-    return item
-
-@app.get("/items/{itemId}", response_model=Item)
-def getItem (itemId:int) -> Item:
-    item = items[itemId]
-    if itemId < len(items):
-        return items(itemId)
-    else:
-        raise HTTPException (status_code=404, detail=f"item {itemId} not found")
-    
-@app.get("/items", response_model=list[Item])
-def ListItems (limit:int = 10):
-    return items[0:limit]
+# Incluir routers definidos en la API
+app.include_router(routes_user.router)
+app.include_router(routes_role.router)
