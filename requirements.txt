@@ -1,1 +1,2 @@
 pydantic[email]
+prometheus_client==0.19.0
