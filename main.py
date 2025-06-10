@@ -7,7 +7,7 @@ from app.monitoring.exporter import start_monitoring
 
 # Crea las tablas en la base de datos (si no existen)
 Base.metadata.create_all(bind=engine)
-start_monitoring()
+# start_monitoring()
 
 
 app = FastAPI(
